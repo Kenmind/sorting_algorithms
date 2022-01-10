@@ -22,6 +22,7 @@ void swap(int *a, int *b, int *arr, size_t size)
  * quickSort - Quick sort algorithm
  * @low: first element
  * @high: last element
+ * @arr: array to sort
  * @size: size of the array
  */
 
