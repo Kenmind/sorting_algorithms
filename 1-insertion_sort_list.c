@@ -2,36 +2,26 @@
 
 /**
  * sorted_insert - Inserts a new node in sorted way in
- *			a sorted list
+ * a sorted list
  * @head_ref: pointer to head node of doubly linked list
  * @newNode: Node to insert
  */
 
 void sorted_insert(listint_t **head_ref, listint_t *newNode)
 {
-	listint_t *current;
+	listint_t *temp = NULL;
 
-	if (*head_ref == NULL)
-		*head_ref = newNode;
-	else if ((*head_ref)->n >= newNode->n)
-	{
-	newNode->next = *head_ref;
-	newNode->next->prev = newNode;
-	*head_ref = newNode;
-	}
+	temp = newNode->prev;
+	if (newNode->next)
+		newNode->next->prev = temp;
+	if (temp->prev)
+		temp->prev->next = newNode;
 	else
-	{
-		current = *head_ref;
-
-		while (current->next != NULL &&
-				current->next->n < newNode->n)
-			current = current->next;
-		newNode->next = current->next;
-		if (current->next != NULL)
-			newNode->next->prev = newNode;
-		current->next = newNode;
-		newNode->prev = current;
-	}
+		*head_ref = newNode;
+	newNode->prev = newNode->prev->prev;
+	temp->next = newNode->next;
+	temp->prev = newNode;
+	newNode->next = temp;
 }
 
 /**
@@ -42,14 +32,26 @@ void sorted_insert(listint_t **head_ref, listint_t *newNode)
 
 void insertion_sort_list(listint_t **list)
 {
-	listint_t *sorted = NULL, *current = *list, *next = malloc(sizeof(listint_t));
+	listint_t *current = NULL, *prev_tmp = NULL, *prev = NULL;
 
-	while (current != NULL)
+	if (!list)
+		return;
+	current = *list;
+	while (current)
 	{
-		next = current->next;
-		current->prev = current->next = NULL;
-		sorted_insert(&sorted, current);
-		current = next;
+		prev = current->prev;
+		while (prev)
+		{
+			if (current->n >= prev->n)
+				break;
+			sorted_insert(list, current);
+			prev_tmp = prev;
+			prev = current;
+			current = prev_tmp;
+			print_list(*list);
+			prev = prev->prev;
+			current = current->prev;
+		}
+		current = current->next;
 	}
-	*list = sorted;
 }
