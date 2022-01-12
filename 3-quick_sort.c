@@ -1,83 +1,89 @@
 #include "sort.h"
-#include <stdbool.h>
 
 /**
- * swap - swaps elements and prints array
- * @a: pointer to first integer
- * @b: pointer to second integer
- * @arr: array to print
- * @size: size of array arr
+ * swap - Swaps two elements.
+ * @a: Pointer to first integer
+ * @b: Pointer to secondinteger
  */
 
-void swap(int *a, int *b, int *arr, size_t size)
+void swap(int *a, int *b)
 {
-	int p = *a;
+	int t = *a;
 
 	*a = *b;
-	*b = p;
-	print_array(arr, size);
+	*b = t;
+
 }
 
 /**
- * quickSort - Quick sort algorithm
- * @low: first element
- * @high: last element
+ * partition - Partitions the array arr
+ * @arr: Array to be partitioned
+ * @low: The lower value member
+ * @high: The higher value member
  * @size: size of the array
- * @arr: Array to sort
+ * Return: The lowest value member
  */
 
-void quickSort(int *arr, size_t size, size_t low, size_t high)
+int partition(int *arr, int low, int high, size_t size)
 {
-	int pivot;
-	size_t i = low, j = high - 1;
-	bool ifound = false, jfound = false;
+	int p;
+	int i = low;
+	int j;
 
-	if (high <= low || size <= 1)
-		return;
-	if (high == low + 1)
+	p = arr[high];
+	for (j = low; j < high; j++)
 	{
-		if (arr[low] > arr[high])
-			swap(arr + low, arr + high, arr, size);
-		return;
-	}
-	pivot = arr[high];
-	while (i < high)
-	{
-		if (i >= j)
+		if (arr[j] <= p)
 		{
-			if (ifound)
-				swap(arr + high, arr + j, arr, size), low++;
-			else if (jfound)
-				high--;
-			else
-				swap(arr + high, arr + i, arr, size);
-			quickSort(arr, size, low, high);
-			break;
-		}
-		if (arr[i] >= pivot)
-			ifound = true;
-		if (arr[j] < pivot)
-			jfound = true;
-		if (!ifound)
+
+			swap(&arr[i], &arr[j]);
+
+
+			if (i != j)
+				print_array(arr, size);
+
 			i++;
-		if (!jfound)
-			j--;
-		if (ifound && jfound)
-		{
-			swap(arr + i, arr + j, arr, size);
-			ifound = false, jfound = false;
+
 		}
+	}
+
+	swap(&arr[i], &arr[high]);
+	if (i != j)
+		print_array(arr, size);
+
+	return (i);
+}
+
+/**
+ * quickSort - Sorts an array using quick sort algorithm
+ * @arr: Array to sort
+ * @low: The lower value
+ * @high: The higher value
+ * @size: Size of the array arr
+ */
+
+void quickSort(int *arr, int low, int high, size_t size)
+{
+
+	int p;
+
+	if (low < high)
+	{
+		p = partition(arr, low, high, size);
+		quickSort(arr, low, p - 1, size);
+		quickSort(arr, p + 1, high, size);
 	}
 }
 
 /**
- * quick_sort - Sorts an array using quick sort algorithm
- *
- * @array: Array to sort
- * @size: Size of the array
- */
-
+ * quick_sort - Sort an array using quick sort algorithm
+ * @array: array to sort
+ * @size: size of array
+ **/
 void quick_sort(int *array, size_t size)
 {
-	quickSort(array, size, 0, size - 1);
+	if (size < 2)
+		return;
+
+	quickSort(array, 0, size - 1, size);
 }
