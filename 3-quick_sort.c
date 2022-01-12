@@ -2,20 +2,33 @@
 #include <stdbool.h>
 
 /**
- * swap - swaps elements and prints array
- * @a: pointer to first integer
- * @b: pointer to second integer
+ * partition - sorts  elements into partitions and prints array
+ * @low: lower value of arr
+ * @high: higher value of arr
  * @arr: array to print
  * @size: size of array arr
+ * Return: lowest value
  */
 
-void swap(int *a, int *b, int *arr, size_t size)
+int partition(int *arr, size_t size, int low, int high)
 {
-	int p = *a;
+	int pivot = arr[high], i = low - 1, j = 0, tmp = 0;
 
-	*a = *b;
-	*b = p;
-	print_array(arr, size);
+	for (j = low; j <= high - 1; j++)
+	{
+		if (arr[j] < pivot)
+		{
+			i++;
+			tmp = arr[j];
+			arr[j] = arr[i];
+			arr[i] = tmp;
+			print_array(arr, size);
+		}
+	}
+	tmp = arr[high];
+	arr[high] = arr[i + 1];
+	arr[i + 1] = tmp;
+	return (i + 1);
 }
 
 /**
@@ -26,47 +39,15 @@ void swap(int *a, int *b, int *arr, size_t size)
  * @size: size of the array
  */
 
-void quickSort(int *arr, size_t size, size_t low, size_t high)
+void quickSort(int *arr, size_t size, int low, int high)
 {
-	int pivot;
-	size_t i = low, j = high - 1;
-	bool ifound = false, jfound = false;
+	int i;
 
-	if (high <= low || size <= 1)
-		return;
-	if (high == low + 1)
+	if (low < high)
 	{
-		if (arr[low] > arr[high])
-			swap(arr + low, arr + high, arr, size);
-		return;
-	}
-	pivot = arr[high];
-	while (i < high)
-	{
-		if (i >= j)
-		{
-			if (ifound)
-				swap(arr + high, arr + j, arr, size), low++;
-			else if (jfound)
-				high--;
-			else
-				swap(arr + high, arr + i, arr, size);
-			quickSort(arr, size, low, high);
-			break;
-		}
-		if (arr[i] >= pivot)
-			ifound = true;
-		if (arr[j] < pivot)
-			jfound = true;
-		if (!ifound)
-			i++;
-		if (!jfound)
-			j--;
-		if (ifound && jfound)
-		{
-			swap(arr + i, arr + j, arr, size);
-			ifound = false, jfound = false;
-		}
+		i = partition(arr, size, low, high);
+		quickSort(arr, size, low, i - 1);
+		quickSort(arr, size, i + 1, high);
 	}
 }
 
@@ -79,5 +60,7 @@ void quickSort(int *arr, size_t size, size_t low, size_t high)
 
 void quick_sort(int *array, size_t size)
 {
+	if (array == NULL)
+		return;
 	quickSort(array, size, 0, size - 1);
 }
